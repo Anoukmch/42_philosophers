@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   backup.c                                           :+:      :+:    :+:   */
+/*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 11:28:18 by anoukmechai       #+#    #+#             */
-/*   Updated: 2022/10/21 11:28:20 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2022/10/21 13:56:45 by anoukmechai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ t_philo **struct_arg(t_arg *table, int *stash, int ac)
 	table->sim_status = false;
 	table->dinner = (**t_philo)ft_calloc((table->nbr_philos + 1), sizeof(t_philo *));
 	if (!table->dinner)
+		error ();
+	if (pthread_create(&table->supervisor, NULL, thread_routine, NULL) != 0)
 		error ();
 	return (table->dinner);
 }
@@ -46,14 +48,17 @@ void struct_philo(t_philo **philos, t_arg *table)
 	philos[i] = NULL;
 }
 
+void	struct_fork
+
 int	initialize(int *stash, int ac)
 {
 	t_arg *table;
 	t_philo **philos;
+	t_fork	*forks;
 	
 	philos = struct_arg(table, stash, ac);
 	struct_philo(philos, table);
-	
+	struct_fork(philos);
 }
 
 /* Print table->dinner to see if it's = to philos */

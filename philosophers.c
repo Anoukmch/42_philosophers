@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   backupphilos.c                                     :+:      :+:    :+:   */
+/*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 11:28:37 by anoukmechai       #+#    #+#             */
-/*   Updated: 2022/10/21 11:28:57 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2022/10/21 13:53:08 by anoukmechai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ typedef struct s_arg
 	pthread_t		supervisor;
 	bool			sim_status;
 	pthread_mutex_t	sim_status_protect;
+	
 }               t_arg;
 
 typedef struct s_philo
