@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/21 11:28:37 by anoukmechai       #+#    #+#             */
-/*   Updated: 2022/10/21 13:53:08 by anoukmechai      ###   ########.fr       */
+/*   Created: 2022/10/03 11:13:25 by anoukmechai       #+#    #+#             */
+/*   Updated: 2022/10/28 17:23:03 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,9 @@ typedef struct s_arg
 	time_t			time_to_eat;
 	time_t			time_to_sleep;
 	int				meal_requirmt;
-    t_philo			**dinner;
 	pthread_t		supervisor;
 	bool			sim_status;
 	pthread_mutex_t	sim_status_protect;
-	
 }               t_arg;
 
 typedef struct s_philo
@@ -36,15 +34,18 @@ typedef struct s_philo
 	time_t		last_meal;
 	int			nbr_meal;
     int			id;
-	
+	pthread_mutex_t	mutex;
+	int	msgs;
+
 }               t_philo;
 
-typedef struct s_fork
+typedef struct s_pack
 {
-	pthread_mutex_t	*mutex;
-    int	msgs;
-	
-}               t_fork;
+	t_arg 	*table;
+	t_philo **philos;
+	int count;
+
+}				t_pack;
 
 void	error_msg(char *err)
 {
@@ -66,16 +67,13 @@ char	**split_arg(char **ag)
 	return (array);
 }
 
-void ft_atoi_bis ()
-/* Atoi renvoie les nombres même négatif */
-
 void	is_negative(int i, int nb, int ac)
 {
 	if (i == 1 && nb <= 0)
 		error("Wrong input : not enough philosophers");
 	else if (ac - 1 == 4 && i != 1 && nb < 0)
 		error("Wrong input : time data cannot be negative");
-	else if (ac - 1 == 5)	
+	else if (ac - 1 == 5)
 	{
 		if (i != 1 && i != ac - 1 && nb < 0)
 			error("Wrong input : time data cannot be negative");
@@ -95,7 +93,7 @@ int	*check_parsing(int ac, char **ag)
 	j = 0;
 	stash = ft_calloc(ac - 1, sizeof(int));
 	while (++i < ac)
-	{	
+	{
 		if (!check_digit || ag[i])
 			error();
 		nb = ft_atoi(ag[i]); /* Long long atoi */
@@ -111,7 +109,7 @@ int main(int ac, char **ag)
 {
 	char	**array;
 	int		*stash;
-	
+
 	if (ac - 1 == 1)
 		array = split_arg(ag);
 	else if (ac - 1 != 4 || ac - 1 != 5)
@@ -121,54 +119,4 @@ int main(int ac, char **ag)
 	else
 		stash = check_parsing(ac, ag);
 	initialize(stash, ac);
-}
-
-void	*thread_routine(void *data);
-
-int main()
-{
-	pthread_t	tid1;
-	
-	pthread_create(&tid1, NULL, thread_routine, NULL);
-	pthread_join(tid1, NULL);	
-}
-
-/*******************/
-/* Mutex creation  */
-/*******************/
-
-/* The mutex and the variable it protects */
-
-typedef	struct s_counter
-{
-	pthread_mutex_t	count_mutex; 
-	unsigned int	count;
-} t_counter;
-
-void	*thread_routine(void *data)
-{
-	pthread_mutex_lock(&counter->count_mutex);
-	/* Instructions */
-	pthread_mutex_unlock(&counter->count_mutex);
-}
-
-int main()
-{
-	t_counter	counter;
-	
-	pthread_mutex_init(&counter.count_mutex, NULL);
-	/* Thread creation */
-	pthread_mutex_destroy(&counter.count_mutex);
-}
-
-/*******************/
-/* Time management */
-/*******************/
-
-time_t	get_time_in_ms(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
