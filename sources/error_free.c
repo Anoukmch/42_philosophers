@@ -3,15 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   error_free.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
+/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/02 18:24:47 by amechain          #+#    #+#             */
-/*   Updated: 2022/11/02 18:25:37 by amechain         ###   ########.fr       */
+/*   Created: 2022/12/05 09:57:45 by anoukmechai       #+#    #+#             */
+/*   Updated: 2023/01/03 19:07:13 by anoukmechai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-void	error(char *message)
+#include "../includes/philosophers.h"
+
+void	free_struct(t_pack *pack)
 {
-	printf("Erreur : %s\n", message);
-	exit(0);
+	int	i;
+
+	i = 0;
+	if (pack)
+	{
+		if (pack->philos)
+		{
+			while (i < pack->table->nbr_philos)
+				free(pack->philos[i++]);
+		}
+		free(pack->philos);
+		free(pack->table);
+		free(pack);
+	}
+}
+
+void	free_array(char **array)
+{
+	int	i;
+
+	i = 0;
+	if (!array)
+		return ;
+	while (array[i])
+		free(array[i++]);
+	free(array);
+}
+
+void	free_pars(t_pars *pars)
+{
+	if (pars)
+	{
+		free_array(pars->array);
+		free(pars->stash);
+		free(pars);
+	}
+}
+
+void	error_exit(char *str, t_pack *pack)
+{
+	ft_printf("%s\n", str);
+	free_struct(pack);
+	exit(1);
+}
+
+void	error_parsing(char *str, t_pars *pars)
+{
+	ft_printf("%s\n", str);
+	free_pars(pars);
+	exit(1);
 }

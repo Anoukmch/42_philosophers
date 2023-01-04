@@ -3,120 +3,91 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
+/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/03 11:13:25 by anoukmechai       #+#    #+#             */
-/*   Updated: 2022/10/28 17:23:03 by amechain         ###   ########.fr       */
+/*   Created: 2022/12/05 10:00:48 by anoukmechai       #+#    #+#             */
+/*   Updated: 2023/01/04 09:44:51 by anoukmechai      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* gcc -pthread main.c */
+#include "../includes/philosophers.h"
 
-#include <pthread.h>
-#include <sys/time.h>
-
-typedef struct s_arg
+void	think_routine(t_philo *philos, int print)
 {
-	int				nbr_philos;
-	time_t			start_time;
-	time_t			time_to_die;
-	time_t			time_to_eat;
-	time_t			time_to_sleep;
-	int				meal_requirmt;
-	pthread_t		supervisor;
-	bool			sim_status;
-	pthread_mutex_t	sim_status_protect;
-}               t_arg;
+	time_t	time_to_think;
 
-typedef struct s_philo
-{
-	pthread_t	thread;
-	time_t		last_meal;
-	int			nbr_meal;
-    int			id;
-	pthread_mutex_t	mutex;
-	int	msgs;
-
-}               t_philo;
-
-typedef struct s_pack
-{
-	t_arg 	*table;
-	t_philo **philos;
-	int count;
-
-}				t_pack;
-
-void	error_msg(char *err)
-{
-	perror(err);
-	freeing();
-	exit (1);
+	pthread_mutex_lock(&philos->lock_var);
+	time_to_think = (philos->table->time_to_die
+			- (get_time_in_ms() - philos->last_meal)
+			- philos->table->time_to_eat) / 2;
+	pthread_mutex_unlock(&philos->lock_var);
+	if (time_to_think < 0)
+		time_to_think = 0;
+	else if (time_to_think > 600)
+		time_to_think = 300;
+	if (print)
+		print_message(philos, philos->id, "is thinking");
+	sleep_time(time_to_think, philos);
 }
 
-char	**split_arg(char **ag)
+void	sleep_routine(t_philo *philos)
 {
-	char	**array;
-	int		nbr_string;
-
-	array = ft_split(ag, &nbr_string); /* Modifier split */
-	if (!array)
-		return (error("Allocation failed"));
-	if (nbr_string - 1 != 4 || nbr_string - 1 != 5)
-		return (error("Wrong number input"));
-	return (array);
+	print_message(philos, philos->id, "is sleeping");
+	sleep_time(philos->table->time_to_sleep, philos);
 }
 
-void	is_negative(int i, int nb, int ac)
+void	eat_routine(t_philo *philos)
 {
-	if (i == 1 && nb <= 0)
-		error("Wrong input : not enough philosophers");
-	else if (ac - 1 == 4 && i != 1 && nb < 0)
-		error("Wrong input : time data cannot be negative");
-	else if (ac - 1 == 5)
+	print_message(philos, philos->id, "is eating");
+	pthread_mutex_lock(&philos->lock_var);
+	philos->last_meal = get_time_in_ms();
+	pthread_mutex_unlock(&philos->lock_var);
+	sleep_time(philos->table->time_to_eat, philos);
+	if (!simulation_must_stop(philos))
 	{
-		if (i != 1 && i != ac - 1 && nb < 0)
-			error("Wrong input : time data cannot be negative");
-		else if (i == ac - 1 && nb <= 0)
-			error("Wrong input : wrong meal requirement");
+		pthread_mutex_lock(&philos->lock_var);
+		philos->nbr_meal++;
+		pthread_mutex_unlock(&philos->lock_var);
 	}
 }
 
-int	*check_parsing(int ac, char **ag)
+int	simulation(t_philo	*philos)
 {
-	int nb;
-	int i;
-	int j;
-	int	*stash;
-
-	i = 1;
-	j = 0;
-	stash = ft_calloc(ac - 1, sizeof(int));
-	while (++i < ac)
-	{
-		if (!check_digit || ag[i])
-			error();
-		nb = ft_atoi(ag[i]); /* Long long atoi */
-		if (nb > INT_MAX)
-			error("Wrong input : not an integer");
-		is_negative(i, nb, ac);
-		stash[j++] = nb;
-	}
-	return (stash);
+	pthread_mutex_lock(&philos->table->mutex[philos->fork[0]]);
+	print_message(philos, philos->id, "has taken a fork");
+	pthread_mutex_lock(&philos->table->mutex[philos->fork[1]]);
+	print_message(philos, philos->id, "has taken a fork");
+	eat_routine(philos);
+	pthread_mutex_unlock(&philos->table->mutex[philos->fork[0]]);
+	pthread_mutex_unlock(&philos->table->mutex[philos->fork[1]]);
+	if (simulation_must_stop(philos))
+		return (1);
+	sleep_routine(philos);
+	if (simulation_must_stop(philos))
+		return (1);
+	think_routine(philos, 1);
+	return (0);
 }
 
-int main(int ac, char **ag)
+void	*philos_routine(void *data)
 {
-	char	**array;
-	int		*stash;
+	t_philo	*philos;
 
-	if (ac - 1 == 1)
-		array = split_arg(ag);
-	else if (ac - 1 != 4 || ac - 1 != 5)
-		error("Wrong number input");
-	if (array)
-		stash = check_parsing(ac, array);
-	else
-		stash = check_parsing(ac, ag);
-	initialize(stash, ac);
+	philos = (t_philo *)data;
+	pthread_mutex_lock(&philos->lock_var);
+	philos->last_meal = philos->table->start_time;
+	pthread_mutex_unlock(&philos->lock_var);
+	sync_thread(philos->table->start_time);
+	if (philos->table->time_to_die == 0)
+		return (NULL);
+	if (philos->table->nbr_philos == 1)
+		return (one_philosopher(philos));
+	if (philos->id % 2)
+		think_routine(philos, 0);
+	while (!simulation_must_stop(philos))
+	{
+		if (simulation(philos))
+			return (NULL);
+	}
+	return (NULL);
 }
