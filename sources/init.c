@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 15:50:41 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/04 10:27:13 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2023/01/08 15:00:09 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,53 +52,55 @@ void	init_mutex(t_pack *pack)
 		error_exit("pthread_mutex_init fail", pack);
 }
 
-t_arg	*struct_arg(t_pack *pack, t_pars *pars)
+void	struct_arg(t_pack *pack, t_pars *pars)
 {
-	t_arg	*table;
-
-	table = ft_calloc(1, sizeof(t_arg));
-	if (!table)
+	pack->table = ft_calloc(1, sizeof(t_arg));
+	if (!pack->table)
+	{
+		free_pars(pars);
 		error_exit("table Allocation failed", pack);
-	table->nbr_philos = pars->stash[0];
-	table->time_to_die = pars->stash[1];
-	table->time_to_eat = pars->stash[2];
-	table->time_to_sleep = pars->stash[3];
-	table->start_time = 0;
-	table->meal_requirmt = -1;
+	}
+	pack->table->nbr_philos = pars->stash[0];
+	pack->table->time_to_die = pars->stash[1];
+	pack->table->time_to_eat = pars->stash[2];
+	pack->table->time_to_sleep = pars->stash[3];
+	pack->table->start_time = 0;
+	pack->table->meal_requirmt = -1;
 	if (pars->nbr_elem == 5)
-		table->meal_requirmt = pars->stash[4];
-	table->sim_stop = false;
-	table->mutex = ft_calloc(table->nbr_philos, sizeof(pthread_mutex_t));
-	if (!table->mutex)
+		pack->table->meal_requirmt = pars->stash[4];
+	pack->table->sim_stop = false;
+	pack->table->mutex = ft_calloc(pack->table->nbr_philos,
+			sizeof(pthread_mutex_t));
+	if (!pack->table->mutex)
+	{
+		free_pars(pars);
 		error_exit("table Allocation failed", pack);
-	return (table);
+	}
 }
 
-t_philo	**struct_philo(t_pack *pack)
+void	struct_philo(t_pack *pack)
 {
 	int		i;
-	t_philo	**philos;
 
 	i = 0;
-	philos = ft_calloc((pack->table->nbr_philos + 1), sizeof(t_philo *));
-	if (!philos)
+	pack->philos = ft_calloc((pack->table->nbr_philos + 1), sizeof(t_philo *));
+	if (!pack->philos)
 		error_exit("philos Allocation failed", pack);
 	while (i < pack->table->nbr_philos)
-		philos[i++] = NULL;
+		pack->philos[i++] = NULL;
 	i = 0;
 	while (i < pack->table->nbr_philos)
 	{
-		philos[i] = ft_calloc(1, sizeof(t_philo));
-		if (!philos[i])
+		pack->philos[i] = ft_calloc(1, sizeof(t_philo));
+		if (!pack->philos[i])
 			error_exit("philos [i] Allocation failed", pack);
-		philos[i]->nbr_meal = 0;
-		philos[i]->id = i;
-		philos[i]->table = pack->table;
-		assign_forks(philos[i]);
+		pack->philos[i]->nbr_meal = 0;
+		pack->philos[i]->id = i;
+		pack->philos[i]->table = pack->table;
+		assign_forks(pack->philos[i]);
 		i++;
 	}
-	philos[i] = NULL;
-	return (philos);
+	pack->philos[i] = NULL;
 }
 
 t_pack	*init(t_pars *pars)
@@ -107,11 +109,11 @@ t_pack	*init(t_pars *pars)
 
 	pack = ft_calloc(1, sizeof(t_pack));
 	if (!pack)
-		error_exit("pack Allocation failed", NULL);
+		error_parsing("pack Allocation failed", pars);
 	pack->table = NULL;
 	pack->philos = NULL;
-	pack->table = struct_arg(pack, pars);
-	pack->philos = struct_philo(pack);
+	struct_arg(pack, pars);
+	struct_philo(pack);
 	init_mutex(pack);
 	init_thread(pack);
 	return (pack);

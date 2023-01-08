@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 13:50:23 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/04 10:40:16 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2023/01/08 14:17:25 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdio.h>
 # include <pthread.h>
 # include <sys/time.h>
-# include <limits.h> 
+# include <limits.h>
 
 # include "../includes/libs/libs.h"
 
@@ -81,8 +81,8 @@ void	free_pars(t_pars *pars);
 // INIT //
 void	init_thread(t_pack *pack);
 void	init_mutex(t_pack *pack);
-t_arg	*struct_arg(t_pack *pack, t_pars *pars);
-t_philo	**struct_philo(t_pack *pack);
+void	struct_arg(t_pack *pack, t_pars *pars);
+void	struct_philo(t_pack *pack);
 t_pack	*init(t_pars *pars);
 
 // PARSING //

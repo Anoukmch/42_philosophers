@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_free.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 09:57:45 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/03 19:07:13 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2023/01/08 14:51:54 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	free_struct(t_pack *pack)
 			while (i < pack->table->nbr_philos)
 				free(pack->philos[i++]);
 		}
+		if (pack->table)
+			free(pack->table->mutex);
 		free(pack->philos);
 		free(pack->table);
 		free(pack);

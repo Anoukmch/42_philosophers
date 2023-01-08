@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+         #
+#    By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/22 15:27:44 by jmatheis          #+#    #+#              #
-#    Updated: 2023/01/03 17:36:24 by anoukmechai      ###   ########.fr        #
+#    Updated: 2023/01/08 14:44:17 by amechain         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,8 +24,8 @@ M_SRC = main.c \
 		parsing.c \
 		supervisor.c \
 		one_philos.c \
-		utils.c 
-		
+		utils.c
+
 M_SRCS = $(addprefix ./sources/, $(M_SRC))
 
 M_OBJS = $(M_SRCS:.c=.o)
@@ -39,7 +39,7 @@ all: $(NAME)
 bonus : $(BONUS)
 
 $(NAME): $(M_OBJS) $(LIBS_DIR)/$(LIBS_NAME)
-	$(CC) $(CFLAGS) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(LIBS_DIR)/$(LIBS_NAME):
 	make -sC $(LIBS_DIR)

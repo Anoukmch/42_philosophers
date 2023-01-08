@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   end_sim.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 10:06:58 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/04 10:35:21 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2023/01/08 12:37:29 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 int	simulation_must_stop(t_philo *philos)
 {
-	pthread_mutex_lock(&pack->table->lock_sim);
+	pthread_mutex_lock(&philos->table->lock_sim);
 	if (philos->table->sim_stop == true)
 	{
-		pthread_mutex_unlock(&pack->table->lock_sim);
+		pthread_mutex_unlock(&philos->table->lock_sim);
 		return (1);
 	}
-	pthread_mutex_unlock(&pack->table->lock_sim);
+	pthread_mutex_unlock(&philos->table->lock_sim);
 	return (0);
 }
 

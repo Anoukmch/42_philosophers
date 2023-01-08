@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anoukmechain <anoukmechain@student.42.f    +#+  +:+       +#+        */
+/*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 11:13:25 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/04 10:38:18 by anoukmechai      ###   ########.fr       */
+/*   Updated: 2023/01/08 15:05:59 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,17 @@ int	arg_table(int ac, char **ag, t_pars	*pars)
 
 	i = 1;
 	j = 0;
-	pars->array = ft_calloc(ac, sizeof(char));
+	pars->array = ft_calloc(ac, sizeof(char *));
 	if (!pars->array)
 		error_parsing("Allocation failed", pars);
 	while (j < ac - 1)
-		pars->array[j++] = ag[i++];
+	{
+		pars->array[j] = ft_strdup(ag[i]);
+		if (!pars->array[j])
+			error_parsing("Allocation failed", pars);
+		j++;
+		i++;
+	}
 	pars->array[j] = NULL;
 	return (j);
 }
@@ -60,8 +66,9 @@ int	main(int ac, char **ag)
 		error_parsing("Wrong number input", pars);
 	else
 		check_parsing(pars);
-	pack = init(pars, ac);
+	pack = init(pars);
 	end_sim(pack);
+	free_pars(pars);
 	free_struct(pack);
 	return (0);
 }
