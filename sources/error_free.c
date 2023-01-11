@@ -6,7 +6,7 @@
 /*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/05 09:57:45 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/08 14:51:54 by amechain         ###   ########.fr       */
+/*   Updated: 2023/01/08 15:27:36 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,14 @@ void	free_pars(t_pars *pars)
 
 void	error_exit(char *str, t_pack *pack)
 {
-	ft_printf("%s\n", str);
+	printf("%s\n", str);
 	free_struct(pack);
 	exit(1);
 }
 
 void	error_parsing(char *str, t_pars *pars)
 {
-	ft_printf("%s\n", str);
+	printf("%s\n", str);
 	free_pars(pars);
 	exit(1);
 }

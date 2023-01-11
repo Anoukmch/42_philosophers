@@ -6,11 +6,11 @@
 /*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 14:50:42 by amechain          #+#    #+#             */
-/*   Updated: 2022/06/23 12:46:29 by amechain         ###   ########.fr       */
+/*   Updated: 2023/01/08 15:33:14 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../includes/philosophers.h"
 
 static int	count_substrs(char const *s, char c)
 {

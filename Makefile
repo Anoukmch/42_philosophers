@@ -6,7 +6,7 @@
 #    By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/11/22 15:27:44 by jmatheis          #+#    #+#              #
-#    Updated: 2023/01/08 14:44:17 by amechain         ###   ########.fr        #
+#    Updated: 2023/01/08 15:35:16 by amechain         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,35 +24,28 @@ M_SRC = main.c \
 		parsing.c \
 		supervisor.c \
 		one_philos.c \
-		utils.c
+		utils.c \
+		utils2.c \
+		ft_split.c
 
 M_SRCS = $(addprefix ./sources/, $(M_SRC))
 
 M_OBJS = $(M_SRCS:.c=.o)
 
-LIBS_DIR = ./includes/libs
-
-LIBS_NAME = libs.a
-
 all: $(NAME)
 
 bonus : $(BONUS)
 
-$(NAME): $(M_OBJS) $(LIBS_DIR)/$(LIBS_NAME)
+$(NAME): $(M_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
-
-$(LIBS_DIR)/$(LIBS_NAME):
-	make -sC $(LIBS_DIR)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	make clean -C $(LIBS_DIR)
 	@rm -f $(M_OBJS)
 
 fclean: clean
-	make fclean -C $(LIBS_DIR)
 	@rm -f $(NAME)
 
 re: fclean all

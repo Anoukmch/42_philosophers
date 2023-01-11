@@ -6,7 +6,7 @@
 /*   By: amechain <amechain@student.42heilbronn.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 13:50:23 by anoukmechai       #+#    #+#             */
-/*   Updated: 2023/01/08 14:17:25 by amechain         ###   ########.fr       */
+/*   Updated: 2023/01/08 15:34:33 by amechain         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 # include <pthread.h>
 # include <sys/time.h>
 # include <limits.h>
-
-# include "../includes/libs/libs.h"
 
 typedef struct s_pars
 {
@@ -106,6 +104,12 @@ time_t	get_time_in_ms(void);
 void	print_message(t_philo *philos, int id, char *message);
 void	sleep_time(time_t sleep_time, t_philo *philos);
 void	assign_forks(t_philo *philos);
+void	*ft_calloc(size_t count, size_t size);
+void	ft_bzero(void *s, size_t n);
+char	*ft_strdup(const char *s1);
+size_t	ft_strlen(const char *s);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
+char	**ft_split(char const *s, char c);
 
 // ONE PHILOS //
 void	*one_philosopher(t_philo *philos);
